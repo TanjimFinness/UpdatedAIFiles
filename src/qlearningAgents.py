@@ -41,8 +41,10 @@ class QLearningAgent(ReinforcementAgent):
     def __init__(self, **args):
         "You can initialize Q-values here..."
         ReinforcementAgent.__init__(self, **args)
+        print('aa')
 
-        "*** YOUR CODE HERE ***"
+        # "*** YOUR CODE HERE ***"
+        self.q_table = dict()
 
     def getQValue(self, state, action):
         """
@@ -50,7 +52,19 @@ class QLearningAgent(ReinforcementAgent):
           Should return 0.0 if we have never seen a state
           or the Q node value otherwise
         """
-        "*** YOUR CODE HERE ***"
+        # "*** YOUR CODE HERE ***"
+
+        # TODO:  Computar Q(state,action)
+
+        q_value = self.q_table.get((state, action))
+        if q_value is not None:
+            print(f'q_value [state {state} action {action}]: {q_value}')
+        else:
+            q_value = 0.
+            self.q_table.update({(state, action): q_value})
+            print(f'q_table :: add state {state} action {action}: q_value {q_value}')
+
+        return q_value
         util.raiseNotDefined()
 
 
@@ -58,10 +72,20 @@ class QLearningAgent(ReinforcementAgent):
         """
           Returns max_action Q(state,action)
           where the max is over legal actions.  Note that if
-          there are no legal actions, which is the case at the
+          there are no leglsal actions, which is the case at the
           terminal state, you should return a value of 0.0.
         """
-        "*** YOUR CODE HERE ***"
+        # "*** YOUR CODE HERE ***"
+        # TODO: V(s) = max_{a in actions} Q(s,a)
+
+        actions = self.getAction(state)
+        print(f'actions: {actions}')
+        q_values = [self.getQValue(state, action) for action in actions]
+
+        best_value = max(*q_values)
+        print(f'best_value: {best_value}')
+        return best_value
+
         util.raiseNotDefined()
 
     def computeActionFromQValues(self, state):
@@ -70,7 +94,14 @@ class QLearningAgent(ReinforcementAgent):
           are no legal actions, which is the case at the terminal state,
           you should return None.
         """
-        "*** YOUR CODE HERE ***"
+        # "*** YOUR CODE HERE ***"
+        # TODO: computar policy(s) = arg_max_{a in actions} Q(s,a)
+        # Em caso de valores iguais, escolhe aleatorio
+
+        # best_action =
+        max_key = max(self.q_table, key=self.q_table.get)
+        print(f'max: {max_key}')
+
         util.raiseNotDefined()
 
     def getAction(self, state):
@@ -87,8 +118,10 @@ class QLearningAgent(ReinforcementAgent):
         # Pick Action
         legalActions = self.getLegalActions(state)
         action = None
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # "*** YOUR CODE HERE ***"
+        print(legalActions)
+        # util.raiseNotDefined()
+        action = legalActions[0]
 
         return action
 
