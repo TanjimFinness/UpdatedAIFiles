@@ -79,16 +79,13 @@ class QLearningAgent(ReinforcementAgent):
         best_value = 0.
 
         actions = self.getLegalActions(state)
+        if len(actions) == 0:
+            return 0.0
 
-        if actions:
-            q_values = [self.getQValue(state, action) for action in actions]
-            print(f'q_values: {q_values}')
-            if q_values is list:
-                best_value = max(*q_values)
-            elif q_values is float:
-                best_value = q_values
-
-        print(f'best_value: {best_value}')
+        for action in actions:
+            if self.getQValue(state, action) > best_value:
+                best_value = self.getQValue(state, action)
+        #print(f'best_value: {best_value}')
         return best_value
 
 
@@ -116,7 +113,6 @@ class QLearningAgent(ReinforcementAgent):
             # max_key = max(self.q_table, key=self.q_table.get)
             # best_action = max_key[1]
 
-        print(f'policy :: best_action : {best_action} | value : {best_action_val}')
         return best_action
 
 
@@ -132,6 +128,8 @@ class QLearningAgent(ReinforcementAgent):
           HINT: To pick randomly from a list, use random.choice(list)
         """
         # Pick Action
+        if util.flipCoin(self.epsilon):
+            return random.choice(self.getLegalActions(state))
         action = self.getPolicy(state)
         return action
 
@@ -145,27 +143,21 @@ class QLearningAgent(ReinforcementAgent):
           it will be called on your behalf
         """
         # "*** YOUR CODE HERE ***"
-        print(state, action, nextState, reward)
+        #print(state, action, nextState, reward)
         q_old = self.getQValue(state, action)
         opt_future_value_estimate = self.computeValueFromQValues(nextState)
         learned = reward + self.discount * opt_future_value_estimate
 
-        print(f'q_old: {q_old} | reward: {reward} | opt_future: {opt_future_value_estimate} | learned : {learned}')
+        #print(f'q_old: {q_old} | reward: {reward} | opt_future: {opt_future_value_estimate} | learned : {learned}')
 
         q_updated = (1 - self.alpha) * q_old + self.alpha * learned
-        # q_updated = q_old + self.alpha * (learned - q_old)
-        print(f'q_updated : {q_updated}')
+        q_updated = q_old + self.alpha * (learned - q_old)
+        #print(f'q_updated : {q_updated}')
 
         self.q_table.update([((state, action), q_updated)])
-        print(f'updated :: q_value : state {state} | action {action} | nextState {nextState} : {q_updated}')
-        print(f'q_table :: \n{self.q_table}')
+        #print(f'updated :: q_value : state {state} | action {action} | nextState {nextState} : {q_updated}')
+        #print(f'q_table :: \n{self.q_table}')
 
-
-        print(f'Last state: {self.lastState}')
-        if self.lastState is not None:
-            self.update(self.lastState, self.lastState, state, q_updated)
-
-        # util.raiseNotDefined()
         # TODO: Return (state, action)
         # return nextState,
 
