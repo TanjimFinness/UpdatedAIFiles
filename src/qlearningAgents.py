@@ -103,9 +103,11 @@ class QLearningAgent(ReinforcementAgent):
         best_action = None
         best_action_val = -9999
 
-        if legalActions:
+        if len(legalActions) != 0:
             for act in legalActions:
                 act_val = self.q_table.get((state, act))
+                if act_val is None:
+                    act_val = 0.
                 if act_val > best_action_val:
                     best_action_val = act_val
                     best_action = act
