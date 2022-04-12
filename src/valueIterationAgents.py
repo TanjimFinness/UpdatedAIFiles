@@ -15,6 +15,7 @@
 import mdp, util
 from learningAgents import ValueEstimationAgent
 
+
 class ValueIterationAgent(ValueEstimationAgent):
     """
         * Please read learningAgents.py before reading this.*
@@ -24,6 +25,7 @@ class ValueIterationAgent(ValueEstimationAgent):
         for a given number of iterations using the supplied
         discount factor.
     """
+
     def __init__(self, mdp, discount=0.9, iterations=100):
         """
           Your value iteration agent should take an mdp on
@@ -42,17 +44,12 @@ class ValueIterationAgent(ValueEstimationAgent):
         self.iterations = iterations
         self.values = util.Counter()  # A Counter is a dict with default 0
 
-        # Write value iteration code here
-        '''IDEA: in each iteration, calculate the value of every single
-                 state, using Bellman equation'''
         for _ in range(self.iterations):
             updated_values = util.Counter()
             for state in self.mdp.getStates():
-                if self.getPolicy(state) is not None: # Non-terminal state
+                if self.getPolicy(state) is not None:  # Non-terminal state
                     updated_values[state] = self.getQValue(state, self.getPolicy(state))
             self.values = updated_values
-
-
 
     def getValue(self, state):
         """
@@ -71,11 +68,10 @@ class ValueIterationAgent(ValueEstimationAgent):
         if self.mdp.isTerminal(state):
             return self.mdp.getReward(state, action, None)
 
-        q_value = 0 + self.mdp.getReward(state, action, None)
-        for next_state, prob in self.mdp.getTransitionStatesAndProbs(state, action):
-            q_value += prob * self.discount * self.getValue(next_state)
+        q_value = self.mdp.getReward(state, action, None) # R(s,a)
+        q_value += sum(prob * self.discount * self.getValue(next_state) # Sum ...
+                       for next_state, prob in self.mdp.getTransitionStatesAndProbs(state, action))
         return q_value
-
 
     def computeActionFromValues(self, state):
         """
