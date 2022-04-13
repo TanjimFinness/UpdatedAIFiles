@@ -104,16 +104,21 @@ class QLearningAgent(ReinforcementAgent):
         best_action_val = -9999
 
         if len(legalActions) != 0:
+            random.shuffle(legalActions)
             for act in legalActions:
-                act_val = self.q_table.get((state, act))
+                act_val = self.getQValue(state, act)
                 if act_val is None:
                     act_val = 0.
+
                 if act_val > best_action_val:
                     best_action_val = act_val
                     best_action = act
 
-            # max_key = max(self.q_table, key=self.q_table.get)
-            # best_action = max_key[1]
+                if act_val == best_action_val:
+                    choice = random.choice([act, best_action])
+                    if choice == act:
+                        best_action = act
+                        best_action_val = act_val
 
         return best_action
 
@@ -160,8 +165,6 @@ class QLearningAgent(ReinforcementAgent):
         #print(f'updated :: q_value : state {state} | action {action} | nextState {nextState} : {q_updated}')
         #print(f'q_table :: \n{self.q_table}')
 
-        # TODO: Return (state, action)
-        # return nextState,
 
     def getPolicy(self, state):
         return self.computeActionFromQValues(state)
