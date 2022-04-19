@@ -76,7 +76,7 @@ class QLearningAgent(ReinforcementAgent):
         # "*** YOUR CODE HERE ***"
         # TODO: V(s) = max_{a in actions} Q(s,a)
 
-        best_value = 0.
+        best_value = -9999
 
         actions = self.getLegalActions(state)
         if len(actions) == 0:
@@ -99,7 +99,7 @@ class QLearningAgent(ReinforcementAgent):
         # TODO: computar policy(s) = arg_max_{a in actions} Q(s,a)
         # Em caso de valores iguais, escolhe aleatorio
 
-        legalActions = self.getLegalActions(state)
+        legalActions = list(self.getLegalActions(state))
         best_action = None
         best_action_val = -9999
 
@@ -107,8 +107,6 @@ class QLearningAgent(ReinforcementAgent):
             random.shuffle(legalActions)
             for act in legalActions:
                 act_val = self.getQValue(state, act)
-                if act_val is None:
-                    act_val = 0.
 
                 if act_val > best_action_val:
                     best_action_val = act_val
@@ -150,21 +148,12 @@ class QLearningAgent(ReinforcementAgent):
           it will be called on your behalf
         """
         # "*** YOUR CODE HERE ***"
-        #print(state, action, nextState, reward)
         q_old = self.getQValue(state, action)
         opt_future_value_estimate = self.computeValueFromQValues(nextState)
         learned = reward + self.discount * opt_future_value_estimate
 
-        #print(f'q_old: {q_old} | reward: {reward} | opt_future: {opt_future_value_estimate} | learned : {learned}')
-
         q_updated = (1 - self.alpha) * q_old + self.alpha * learned
-        q_updated = q_old + self.alpha * (learned - q_old)
-        #print(f'q_updated : {q_updated}')
-
         self.q_table.update([((state, action), q_updated)])
-        #print(f'updated :: q_value : state {state} | action {action} | nextState {nextState} : {q_updated}')
-        #print(f'q_table :: \n{self.q_table}')
-
 
     def getPolicy(self, state):
         return self.computeActionFromQValues(state)
